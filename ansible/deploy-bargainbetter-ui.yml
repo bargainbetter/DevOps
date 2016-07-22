@@ -1,0 +1,28 @@
+# Example usage:  ansible-playbook deploy-bargainbetter-ui.yml -e 'hosts=prod name=prod-blue ui_port=9001'
+---
+  - name: deploy docker application container
+    sudo: true
+    hosts: '{{hosts}}'
+    tasks:
+    - name: Install docker-py as a workaround for Ansible issue
+      pip: name=docker-py version=1.2.3
+
+    # - name: pull and start container
+    #   docker:
+    #     name: bargain-better-ui
+    #     image: chrisjstevenson/bargain-better-ui
+    #     state: reloaded
+    #     pull: always
+    #     restart_policy: always
+    #     ports:
+    #       - "9002:9002"   #host_port:container_port
+
+    - name: pull and start container
+      docker:
+        name: "bargain-better-{{name}}"
+        image: chrisjstevenson/bargain-better-ui
+        state: reloaded
+        pull: always
+        restart_policy: always
+        ports:
+          - "{{ui_port}}:9002"   #host_port:container_port
